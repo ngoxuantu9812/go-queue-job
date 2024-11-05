@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  redis:
+    image: 'bitnami/redis:latest'
+    ports:
+      - 6379:6378
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-tier
+networks:
+  app-tier:
+    driver: bridge
