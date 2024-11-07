@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/hibiken/asynq"
+	"github.com/hibiken/asynqmon"
 	"log"
 	"net"
 	"net/http"
@@ -23,8 +24,13 @@ func main() {
 }
 
 func createServerHttp() {
+	h := asynqmon.New(asynqmon.Options{
+		RootPath:     "/monitoring", // RootPath specifies the root for asynqmon app
+		RedisConnOpt: asynq.RedisClientOpt{Addr: ":6379"},
+	})
 	r := mux.NewRouter()
 	r.HandleFunc("/add-job-to-queue", AddJobToQueue).Methods("GET")
+	r.PathPrefix(h.RootPath()).Handler(h)
 
 	ctx := context.Background()
 	server := &http.Server{
